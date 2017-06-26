@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">InterviewTest</string>
+    <string name="text_place_name">Place Name</string>
+    <string name="text_place_address">Place Address</string>
+    <string name="text_place_description">Place Description</string>
+    <string name="hint_place_name">Fill in place name</string>
+    <string name="hint_place_address">Fill in place address</string>
+    <string name="hint_place_description">Fill in place description</string>
+    <string name="button_save">Save</string>
+    <string name="content_description">Place Image</string>
+</resources>
