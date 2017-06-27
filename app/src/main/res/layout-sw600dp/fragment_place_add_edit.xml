@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <ImageView
+        android:id="@+id/imgAddEditFrag"
+        android:layout_width="@dimen/fragment_add_edit_img_size"
+        android:layout_height="@dimen/fragment_add_edit_img_size"
+        android:layout_marginLeft="@dimen/fragment_add_edit_layout_horizontal_margin"
+        android:layout_marginRight="@dimen/fragment_add_edit_layout_horizontal_margin"
+        android:layout_marginStart="@dimen/fragment_add_edit_layout_start_end_margin"
+        android:layout_marginEnd="@dimen/fragment_add_edit_layout_start_end_margin"
+        android:layout_marginTop="16dp"
+        android:src="@mipmap/ic_no_image"
+        android:contentDescription="@string/content_description"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/txtAddEditFrag_PlaceName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/fragment_add_edit_first_txt_top_margin"
+        android:layout_marginStart="@dimen/fragment_add_edit_layout_start_end_margin"
+        android:layout_marginLeft="@dimen/fragment_add_edit_layout_horizontal_margin"
+        android:text="@string/text_place_name"
+        android:textSize="@dimen/txt_size"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imgAddEditFrag" />
+
+    <EditText
+        android:id="@+id/edtAddEditFrag_PlaceName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/fragment_add_edit_layout_horizontal_margin"
+        android:layout_marginRight="@dimen/fragment_add_edit_layout_horizontal_margin"
+        android:layout_marginTop="@dimen/fragment_add_edit_edt_vertical_margin"
+        android:layout_marginStart="@dimen/fragment_add_edit_layout_start_end_margin"
+        android:layout_marginEnd="@dimen/fragment_add_edit_layout_start_end_margin"
+        android:ems="10"
+        android:textSize="@dimen/edt_size"
+        android:inputType="textPersonName"
+        android:hint="@string/hint_place_name"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtAddEditFrag_PlaceName"
+        />
+
+
+    <TextView
+        android:id="@+id/txtAddEditFrag_PlaceAddress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/fragment_add_edit_txt_top_margin"
+        android:layout_marginLeft="@dimen/fragment_add_edit_layout_horizontal_margin"
+        android:layout_marginStart="@dimen/fragment_add_edit_layout_start_end_margin"
+        android:text="@string/text_place_address"
+        android:textSize="@dimen/txt_size"
+        app:layout_constraintTop_toBottomOf="@+id/edtAddEditFrag_PlaceName"
+        app:layout_constraintLeft_toLeftOf="parent" />
+
+    <EditText
+        android:id="@+id/edtAddEditFrag_PlaceAddress"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/fragment_add_edit_layout_horizontal_margin"
+        android:layout_marginRight="@dimen/fragment_add_edit_layout_horizontal_margin"
+        android:layout_marginTop="@dimen/fragment_add_edit_edt_vertical_margin"
+        android:layout_marginStart="@dimen/fragment_add_edit_layout_start_end_margin"
+        android:layout_marginEnd="@dimen/fragment_add_edit_layout_start_end_margin"
+        android:ems="10"
+        android:textSize="@dimen/edt_size"
+        android:inputType="textPersonName"
+        android:hint="@string/hint_place_address"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtAddEditFrag_PlaceAddress" />
+
+    <TextView
+        android:id="@+id/txtAddEditFrag_PlaceDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/fragment_add_edit_txt_top_margin"
+        android:layout_marginLeft="@dimen/fragment_add_edit_layout_horizontal_margin"
+        android:layout_marginStart="@dimen/fragment_add_edit_layout_start_end_margin"
+        android:text="@string/text_place_description"
+        android:textSize="@dimen/txt_size"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edtAddEditFrag_PlaceAddress"/>
+
+    <EditText
+        android:id="@+id/edtAddEditFrag_PlaceDescription"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/fragment_add_edit_layout_horizontal_margin"
+        android:layout_marginRight="@dimen/fragment_add_edit_layout_horizontal_margin"
+        android:layout_marginTop="@dimen/fragment_add_edit_edt_vertical_margin"
+        android:layout_marginStart="@dimen/fragment_add_edit_layout_start_end_margin"
+        android:layout_marginEnd="@dimen/fragment_add_edit_layout_start_end_margin"
+        android:ems="10"
+        android:textSize="@dimen/edt_size"
+        android:inputType="textPersonName"
+        android:hint="@string/hint_place_description"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtAddEditFrag_PlaceDescription" />
+
+    <Button
+        android:id="@+id/btnAddEditFrag_Save"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="24dp"
+        android:padding="20dp"
+        android:text="@string/button_save"
+        android:textSize="@dimen/txt_size"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edtAddEditFrag_PlaceDescription" />
+
+</android.support.constraint.ConstraintLayout>

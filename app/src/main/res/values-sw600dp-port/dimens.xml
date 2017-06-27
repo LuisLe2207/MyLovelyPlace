@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="txt_size">28sp</dimen>
+    <dimen name="edt_size">26sp</dimen>
+
+    <dimen name="fragment_add_edit_img_size">200dp</dimen>
+    <dimen name="fragment_add_edit_edt_vertical_margin">8dp</dimen>
+    <dimen name="fragment_add_edit_first_txt_top_margin">32dp</dimen>
+    <dimen name="fragment_add_edit_txt_top_margin">16dp</dimen>
+    <dimen name="fragment_add_edit_layout_start_end_margin">16dp</dimen>
+    <dimen name="fragment_add_edit_layout_horizontal_margin">8dp</dimen>
+
+    <dimen name="fragment_list_layout_padding">8dp</dimen>
+
+
+    <dimen name="fragment_detail_img_size">220dp</dimen>
+
+    <dimen name="row_place_card_layout_margin">8dp</dimen>
+    <dimen name="row_place_layout_padding">8dp</dimen>
+    <dimen name="row_place_img_margin">8dp</dimen>
+    <dimen name="row_place_txt_margin_start_end_left_right">8dp</dimen>
+    <dimen name="row_place_txt_margin_top">16dp</dimen>
+    <dimen name="row_place_img_btn_margin">16dp</dimen>
+
+
+</resources>

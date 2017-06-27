@@ -8,4 +8,7 @@
     <string name="hint_place_description">Fill in place description</string>
     <string name="button_save">Save</string>
     <string name="content_description">Place Image</string>
+    <string name="img_btn_edit_content_description">Edit icon</string>
+    <string name="img_btn_delete_content_description">Delete icon</string>
+    <string name="img_btn_direction_content_description">Direction icon</string>
 </resources>
