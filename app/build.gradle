@@ -29,6 +29,11 @@ dependencies {
     })
     // resolve conflict for findbugs:jsr305 version
     androidTestCompile 'com.google.code.findbugs:jsr305:3.0.1'
+    // required if you want to use Mockito for unit tests
+    testCompile 'org.mockito:mockito-core:2.7.22'
+    // required if you want to use Mockito for Android tests
+    androidTestCompile 'org.mockito:mockito-android:2.7.22'
+
     testCompile 'junit:junit:4.12'
 
     // Layout
@@ -40,10 +45,12 @@ dependencies {
     compile 'com.makeramen:roundedimageview:2.3.0'
 
     // DI
-    compile 'com.google.dagger:dagger-android:2.9'
-    compile 'com.google.dagger:dagger-android-support:2.11-rc1'
-    annotationProcessor 'com.google.dagger:dagger-android-processor:2.11-rc1'
+    compile 'com.google.dagger:dagger:2.11-rc2'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.11-rc2'
+    compile 'com.google.dagger:dagger-android-support:2.11-rc2'
 
     // Maps
     compile 'com.google.android.gms:play-services-maps:10.2.4'
+
+    compile 'com.google.guava:guava:22.0-android'
 }
