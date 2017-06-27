@@ -19,12 +19,16 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <ImageView
+            <com.makeramen.roundedimageview.RoundedImageView
                 android:id="@+id/imgPlaceRow"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:layout_margin="@dimen/row_place_img_margin"
                 android:src="@mipmap/ic_no_image"
+                app:riv_mutate_background="true"
+                app:riv_corner_radius="50dip"
+                app:riv_oval="true"
+                android:scaleType="centerCrop"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
