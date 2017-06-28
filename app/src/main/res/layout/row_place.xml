@@ -73,6 +73,7 @@
                 android:scaleY="0.8"
                 android:src="@mipmap/ic_direction"
                 android:background="?android:selectableItemBackground"
+                android:clickable="true"
                 android:contentDescription="@string/img_btn_direction_content_description"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintRight_toRightOf="parent"

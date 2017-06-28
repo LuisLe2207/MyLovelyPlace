@@ -50,7 +50,7 @@ public class PlacesDataSource implements IPlacesDataSource {
                 String placeDescription = cursor.getString(cursor.getColumnIndexOrThrow(PlacesPersistenceContract.PlaceEntry.COLUMN_NAME_PLACEDESCRIPTION));
                 byte[] placeImage = cursor.getBlob(cursor.getColumnIndexOrThrow(PlacesPersistenceContract.PlaceEntry.COLUMN_NAME_PLACEIMAGE));
 
-                Place place = new Place(placeID, placeName, placeAddress, placeImage);
+                Place place = new Place(placeID, placeName, placeAddress, placeDescription, placeImage);
                 places.add(place);
             }
         }

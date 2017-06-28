@@ -1,9 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="@dimen/fragment_list_layout_padding">
+
+    <TextView
+        android:id="@+id/txtListFrag_NoData"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textSize="@dimen/txt_size"
+        android:text="@string/text_no_data_available"
+        />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rcvListFrag_Places"
@@ -13,4 +22,14 @@
 
     </android.support.v7.widget.RecyclerView>
 
-</RelativeLayout>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabListFrag_AddPlace"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="26dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginEnd="8dp"
+        android:src="@mipmap/ic_add"/>
+
+</FrameLayout>
