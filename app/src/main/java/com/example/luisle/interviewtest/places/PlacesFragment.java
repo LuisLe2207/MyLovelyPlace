@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.luisle.interviewtest.R;
 import com.example.luisle.interviewtest.adapter.PlacesAdapter;
@@ -35,6 +35,9 @@ public class PlacesFragment extends Fragment implements PlacesContract.View, Pla
 
     @BindView(R.id.txtListFrag_NoData)
     TextView txtNoData;
+
+    @BindView(R.id.fabListFrag_AddPlace)
+    FloatingActionButton fabAddPlace;
 
     @BindView(R.id.rcvListFrag_Places)
     RecyclerView rcvPlaces;
@@ -61,13 +64,31 @@ public class PlacesFragment extends Fragment implements PlacesContract.View, Pla
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View rowView = inflater.inflate(R.layout.fragment_place_list, container, false);
-        ButterKnife.bind(this, rowView);
+        View root = inflater.inflate(R.layout.fragment_place_list, container, false);
+        ButterKnife.bind(this, root);
 
         rcvPlaces.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         rcvPlaces.setAdapter(placesAdapter);
+        rcvPlaces.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (dy > 0 && fabAddPlace.getVisibility() == View.VISIBLE) {
+                    fabAddPlace.hide();
+                } else if (dy < 0 && fabAddPlace.getVisibility() != View.VISIBLE) {
+                    fabAddPlace.show();
+                }
+            }
+        });
 
-        return rowView;
+        fabAddPlace.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+        return root;
     }
 
     @Override
@@ -106,11 +127,11 @@ public class PlacesFragment extends Fragment implements PlacesContract.View, Pla
 
     @Override
     public void showPlaceDetailUI(@NonNull String placeID) {
-        Toast.makeText(getContext(), "Hello", Toast.LENGTH_SHORT).show();
+
     }
 
     @Override
     public void startDirectionActivity(View v, Place place) {
-        Toast.makeText(getContext(), "Yoyo", Toast.LENGTH_SHORT).show();
+
     }
 }

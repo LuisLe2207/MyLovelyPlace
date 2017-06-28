@@ -5,7 +5,6 @@ import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.widget.ImageView;
 
 import com.makeramen.roundedimageview.RoundedDrawable;
@@ -37,16 +36,17 @@ public final class AppUtils {
         DisplayMetrics displayMetrics = new DisplayMetrics();
         activity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 
-        float scaleFactor = displayMetrics.density;
-        float widthDp = displayMetrics.widthPixels / scaleFactor;
+        float widthInches = displayMetrics.widthPixels / displayMetrics.xdpi;
+        float heightInches = displayMetrics.heightPixels / displayMetrics.ydpi;
 
-        Log.d("SmallWidth", String.valueOf(widthDp));
+        double diagonalInches = Math.sqrt(Math.pow(widthInches, 2) + Math.pow(heightInches, 2));
+
 
         // Get Device Orientation
         Configuration configuration = activity.getResources().getConfiguration();
 
         // Device's smallest width and in landscape
-        return (widthDp >= 600 && Configuration.ORIENTATION_LANDSCAPE == configuration.orientation);
+        return (diagonalInches > 6.8 && Configuration.ORIENTATION_LANDSCAPE == configuration.orientation);
     }
 
     public interface Communicator {
