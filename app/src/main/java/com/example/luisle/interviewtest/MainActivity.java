@@ -7,13 +7,9 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
-import com.example.luisle.interviewtest.places.DaggerPlacesPresenterComponent;
+import com.example.luisle.interviewtest.addeditplace.AddEditPlaceFragment;
 import com.example.luisle.interviewtest.places.PlacesFragment;
-import com.example.luisle.interviewtest.places.PlacesPresenter;
-import com.example.luisle.interviewtest.places.PlacesPresenterModule;
 import com.example.luisle.interviewtest.utils.AppUtils;
-
-import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -21,10 +17,6 @@ import butterknife.ButterKnife;
 import static com.example.luisle.interviewtest.utils.AppUtils.PLACE_FRAGMENT_TAG;
 
 public class MainActivity extends AppCompatActivity implements AppUtils.Communicator{
-
-    @Inject
-    PlacesPresenter presenter;
-
 
     @BindView(R.id.mainAct_Toolbar)
     Toolbar toolbar;
@@ -46,14 +38,11 @@ public class MainActivity extends AppCompatActivity implements AppUtils.Communic
             transaction.replace(R.id.mainAct_FrameLayout, placeFragment, PLACE_FRAGMENT_TAG).commit();
 
         } else {
+            AddEditPlaceFragment addEditPlaceFragment = AddEditPlaceFragment.newInstance();
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.mainAct_ListFragContent, placeFragment, PLACE_FRAGMENT_TAG).commit();
+            transaction.replace(R.id.mainAct_ListFragContent, placeFragment, PLACE_FRAGMENT_TAG);
+            transaction.replace(R.id.mainAct_AnotherFragContent, addEditPlaceFragment).commit();
         }
-
-        DaggerPlacesPresenterComponent.builder()
-                .placesRepositoryComponent(((MyApp)getApplication()).getRepositoryComponent())
-                .placesPresenterModule(new PlacesPresenterModule(placeFragment)).build()
-                .inject(this);
     }
 
     @Override
