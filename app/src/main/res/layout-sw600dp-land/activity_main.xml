@@ -33,7 +33,7 @@
             android:id="@+id/mainAct_ListFragContent"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="4">
+            android:layout_weight="5">
 
         </FrameLayout>
 
@@ -41,7 +41,7 @@
             android:id="@+id/mainAct_AnotherFragContent"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="4">
+            android:layout_weight="5">
 
         </FrameLayout>
 

@@ -54,6 +54,8 @@ public class PlacesFragment extends Fragment implements PlacesContract.View, Pla
 
     private PlacesAdapter placesAdapter;
 
+    private boolean deviceIsLanscapeTablet = false;
+
     public static PlacesFragment newInstance() {
         return new PlacesFragment();
     }
@@ -69,6 +71,8 @@ public class PlacesFragment extends Fragment implements PlacesContract.View, Pla
         super.onCreate(savedInstanceState);
         placesAdapter = new PlacesAdapter(getContext(), new ArrayList<Place>(0), this);
 
+        deviceIsLanscapeTablet = AppUtils.deviceIsTabletAndInLandscape(getActivity());
+
         DaggerPlacesPresenterComponent.builder()
                 .placesRepositoryComponent(((MyApp)getActivity().getApplication()).getRepositoryComponent())
                 .placesPresenterModule(new PlacesPresenterModule(this)).build()
@@ -82,25 +86,28 @@ public class PlacesFragment extends Fragment implements PlacesContract.View, Pla
         View root = inflater.inflate(R.layout.fragment_place_list, container, false);
         ButterKnife.bind(this, root);
 
-        if (AppUtils.deviceIsTabletAndInLandscape(getActivity())) {
+        // Check Device Size and Orientation
+        if (deviceIsLanscapeTablet) {
+            // Device is tablet and in landscape mode
             fabAddPlace.setVisibility(View.INVISIBLE);
         } else {
+            // Device is tablet(portrait) or phones(both portrait and landscape)
             fabAddPlace.setVisibility(View.VISIBLE);
+            rcvPlaces.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                    super.onScrolled(recyclerView, dx, dy);
+                    if (dy > 0 && fabAddPlace.getVisibility() == View.VISIBLE) {
+                        fabAddPlace.hide();
+                    } else if (dy < 0 && fabAddPlace.getVisibility() != View.VISIBLE) {
+                        fabAddPlace.show();
+                    }
+                }
+            });
         }
 
         rcvPlaces.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         rcvPlaces.setAdapter(placesAdapter);
-        rcvPlaces.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                if (dy > 0 && fabAddPlace.getVisibility() == View.VISIBLE) {
-                    fabAddPlace.hide();
-                } else if (dy < 0 && fabAddPlace.getVisibility() != View.VISIBLE) {
-                    fabAddPlace.show();
-                }
-            }
-        });
 
         fabAddPlace.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -133,10 +140,12 @@ public class PlacesFragment extends Fragment implements PlacesContract.View, Pla
 
     @Override
     public void showAddPlaceUi() {
-        AddEditPlaceFragment addEditPlaceFragment = AddEditPlaceFragment.newInstance();
-        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-        transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.slide_in, R.anim.slide_out);
-        transaction.replace(R.id.mainAct_FrameLayout, addEditPlaceFragment, ADD_EDIT_FRAGMENT_TAG).addToBackStack(null).commit();
+        if (!deviceIsLanscapeTablet) {
+            AddEditPlaceFragment addEditPlaceFragment = AddEditPlaceFragment.newInstance(null);
+            FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+            transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.slide_in, R.anim.slide_out);
+            transaction.replace(R.id.mainAct_FrameLayout, addEditPlaceFragment, ADD_EDIT_FRAGMENT_TAG).addToBackStack(null).commit();
+        }
     }
 
     @Override

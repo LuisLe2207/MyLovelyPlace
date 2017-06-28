@@ -13,7 +13,7 @@ import com.example.luisle.interviewtest.data.Place;
 
 public interface AddEditPlaceContract {
     interface View extends BaseView<Presenter>, BaseView.ViewProgress {
-        void redirectUI(boolean result);
+        void redirectUI(boolean result, @Nullable String placeID);
         void setData(@NonNull Place place);
         void showCamera();
         void updateActionBarTitle(boolean isAdd);

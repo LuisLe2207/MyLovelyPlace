@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity implements AppUtils.Communic
             transaction.replace(R.id.mainAct_FrameLayout, placeFragment, PLACE_FRAGMENT_TAG).commit();
 
         } else {
-            AddEditPlaceFragment addEditPlaceFragment = AddEditPlaceFragment.newInstance();
+            AddEditPlaceFragment addEditPlaceFragment = AddEditPlaceFragment.newInstance(null);
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.mainAct_ListFragContent, placeFragment, PLACE_FRAGMENT_TAG);
             transaction.replace(R.id.mainAct_AnotherFragContent, addEditPlaceFragment).commit();

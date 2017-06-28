@@ -19,6 +19,7 @@ import android.widget.EditText;
 import com.example.luisle.interviewtest.MyApp;
 import com.example.luisle.interviewtest.R;
 import com.example.luisle.interviewtest.data.Place;
+import com.example.luisle.interviewtest.places.PlacesFragment;
 import com.example.luisle.interviewtest.utils.AppUtils;
 import com.makeramen.roundedimageview.RoundedImageView;
 
@@ -62,11 +63,19 @@ public class AddEditPlaceFragment extends Fragment implements AddEditPlaceContra
 
     private ProgressDialog progressDialog;
 
+    private boolean deviceIsLanscapeTablet = false;
+
     public static final int REQUEST_IMAGE_CAPTURE = 1;
 
+    public static final String PLACE_ID = "PlaceID";
 
-    public static AddEditPlaceFragment newInstance() {
-        return new AddEditPlaceFragment();
+
+    public static AddEditPlaceFragment newInstance(@Nullable String placeID) {
+        AddEditPlaceFragment addEditPlaceFragment = new AddEditPlaceFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString(PLACE_ID, placeID);
+        addEditPlaceFragment.setArguments(bundle);
+        return addEditPlaceFragment;
     }
 
     @Override
@@ -83,8 +92,12 @@ public class AddEditPlaceFragment extends Fragment implements AddEditPlaceContra
         progressDialog.setIndeterminate(true);
         progressDialog.setCanceledOnTouchOutside(false);
 
+        deviceIsLanscapeTablet = AppUtils.deviceIsTabletAndInLandscape(getActivity());
+
+        String placeID = getArguments().getString(PLACE_ID);
+
         DaggerAddEditPlacePresenterComponent.builder()
-                .addEditPlacePresenterModule(new AddEditPlacePresenterModule(this, null))
+                .addEditPlacePresenterModule(new AddEditPlacePresenterModule(this, placeID))
                 .placesRepositoryComponent(((MyApp) getActivity().getApplication()).getRepositoryComponent()).build()
                 .inject(this);
     }
@@ -157,23 +170,35 @@ public class AddEditPlaceFragment extends Fragment implements AddEditPlaceContra
     }
 
     @Override
-    public void redirectUI(boolean result) {
-        Fragment resultFragment;
+    public void redirectUI(boolean result, @Nullable String placeID) {
+        Fragment resultFragment = null;
         String tag;
-        if (result) {
-            resultFragment =  getActivity().getSupportFragmentManager().findFragmentByTag(PLACE_FRAGMENT_TAG);
-            tag = PLACE_FRAGMENT_TAG;
-        } else {
-            resultFragment =  getActivity().getSupportFragmentManager().findFragmentByTag(DETAIL_FRAGMENT_TAG);
-            tag = DETAIL_FRAGMENT_TAG;
-        }
         FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+        if (!deviceIsLanscapeTablet) {
+            if (result) {
+                resultFragment =  getActivity().getSupportFragmentManager().findFragmentByTag(PLACE_FRAGMENT_TAG);
+                tag = PLACE_FRAGMENT_TAG;
+            } else {
+                resultFragment =  getActivity().getSupportFragmentManager().findFragmentByTag(DETAIL_FRAGMENT_TAG);
+                tag = DETAIL_FRAGMENT_TAG;
+            }
+            transaction.replace(R.id.mainAct_FrameLayout, resultFragment, tag);
+        } else {
+            PlacesFragment placesFragment = (PlacesFragment) getActivity().getSupportFragmentManager().findFragmentByTag(PLACE_FRAGMENT_TAG);
+            if (placeID != null) {
+                resultFragment =  getActivity().getSupportFragmentManager().findFragmentByTag(DETAIL_FRAGMENT_TAG);
+                tag = DETAIL_FRAGMENT_TAG;
+                transaction.replace(R.id.mainAct_AnotherFragContent, resultFragment, tag);
+            }
+            placesFragment.onResume();
+        }
         transaction.setCustomAnimations(R.anim.slide_in, R.anim.slide_out);
-        transaction.replace(R.id.mainAct_FrameLayout, resultFragment, tag);
         if (!result) {
             getActivity().getSupportFragmentManager().popBackStack();
         }
-        resultFragment.onResume();
+        if (resultFragment != null) {
+            resultFragment.onResume();
+        }
         transaction.commit();
     }
 

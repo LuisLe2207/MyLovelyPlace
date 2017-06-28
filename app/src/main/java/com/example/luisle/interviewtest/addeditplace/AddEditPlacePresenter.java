@@ -73,7 +73,7 @@ public class AddEditPlacePresenter implements AddEditPlaceContract.Presenter, Ge
             @Override
             public void run() {
                 view.hideProgressDlg();
-                view.redirectUI(isNewPlace());
+                view.redirectUI(isNewPlace(), placeID);
             }
         }, 2000);
     }
