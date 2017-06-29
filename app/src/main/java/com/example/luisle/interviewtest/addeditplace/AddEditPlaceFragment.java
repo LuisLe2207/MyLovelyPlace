@@ -63,7 +63,7 @@ public class AddEditPlaceFragment extends Fragment implements AddEditPlaceContra
 
     private ProgressDialog progressDialog;
 
-    private boolean deviceIsLanscapeTablet = false;
+    private boolean deviceIsLandscapeTablet = false;
 
     public static final int REQUEST_IMAGE_CAPTURE = 1;
 
@@ -92,7 +92,7 @@ public class AddEditPlaceFragment extends Fragment implements AddEditPlaceContra
         progressDialog.setIndeterminate(true);
         progressDialog.setCanceledOnTouchOutside(false);
 
-        deviceIsLanscapeTablet = AppUtils.deviceIsTabletAndInLandscape(getActivity());
+        deviceIsLandscapeTablet = AppUtils.deviceIsTabletAndInLandscape(getActivity());
 
         String placeID = getArguments().getString(PLACE_ID);
 
@@ -169,15 +169,20 @@ public class AddEditPlaceFragment extends Fragment implements AddEditPlaceContra
         progressDialog.hide();
     }
 
+    // boolean result = IsNewPlace
     @Override
     public void redirectUI(boolean result, @Nullable String placeID) {
         Fragment resultFragment = null;
         String tag;
         FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-        if (!deviceIsLanscapeTablet) {
+        transaction.setCustomAnimations(R.anim.slide_in, R.anim.slide_out);
+
+        if (!deviceIsLandscapeTablet) {
             if (result) {
                 resultFragment =  getActivity().getSupportFragmentManager().findFragmentByTag(PLACE_FRAGMENT_TAG);
                 tag = PLACE_FRAGMENT_TAG;
+                // Pop Places Fragment of out BackStack
+                getActivity().getSupportFragmentManager().popBackStack();
             } else {
                 resultFragment =  getActivity().getSupportFragmentManager().findFragmentByTag(DETAIL_FRAGMENT_TAG);
                 tag = DETAIL_FRAGMENT_TAG;
@@ -192,10 +197,11 @@ public class AddEditPlaceFragment extends Fragment implements AddEditPlaceContra
             }
             placesFragment.onResume();
         }
-        transaction.setCustomAnimations(R.anim.slide_in, R.anim.slide_out);
+        // Pop AddEditFragment out of BackStack for both case: device is in LandscapeTablet and not
         if (!result) {
             getActivity().getSupportFragmentManager().popBackStack();
         }
+
         if (resultFragment != null) {
             resultFragment.onResume();
         }

@@ -2,10 +2,12 @@ package com.example.luisle.interviewtest;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.widget.Toast;
 
 import com.example.luisle.interviewtest.addeditplace.AddEditPlaceFragment;
 import com.example.luisle.interviewtest.places.PlacesFragment;
@@ -14,7 +16,9 @@ import com.example.luisle.interviewtest.utils.AppUtils;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.example.luisle.interviewtest.utils.AppUtils.LANDSCAPE_STACK;
 import static com.example.luisle.interviewtest.utils.AppUtils.PLACE_FRAGMENT_TAG;
+import static com.example.luisle.interviewtest.utils.AppUtils.PORTRAIT_STACK;
 
 public class MainActivity extends AppCompatActivity implements AppUtils.Communicator{
 
@@ -32,17 +36,25 @@ public class MainActivity extends AppCompatActivity implements AppUtils.Communic
         setSupportActionBar(toolbar);
         actionBar = getSupportActionBar();
 
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+
         PlacesFragment placeFragment = PlacesFragment.newInstance();
         if (!AppUtils.deviceIsTabletAndInLandscape(MainActivity.this)) {
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.mainAct_FrameLayout, placeFragment, PLACE_FRAGMENT_TAG).commit();
+            transaction.replace(R.id.mainAct_FrameLayout, placeFragment, PLACE_FRAGMENT_TAG);
 
         } else {
             AddEditPlaceFragment addEditPlaceFragment = AddEditPlaceFragment.newInstance(null);
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.mainAct_ListFragContent, placeFragment, PLACE_FRAGMENT_TAG);
-            transaction.replace(R.id.mainAct_AnotherFragContent, addEditPlaceFragment).commit();
+            transaction.replace(R.id.mainAct_FrameLayout, placeFragment, PLACE_FRAGMENT_TAG);
+            transaction.replace(R.id.mainAct_AnotherFragContent, addEditPlaceFragment);
         }
+
+        // Remove all BackStack fragment when device orientation change
+        getSupportFragmentManager().popBackStack(LANDSCAPE_STACK, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        getSupportFragmentManager().popBackStack(PORTRAIT_STACK, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        transaction.commit();
+
+        Toast.makeText(getApplicationContext(), String.valueOf(getSupportFragmentManager().getBackStackEntryCount()), Toast.LENGTH_SHORT).show();
     }
 
     @Override

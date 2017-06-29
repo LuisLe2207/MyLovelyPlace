@@ -30,7 +30,7 @@
         android:baselineAligned="false">
 
         <FrameLayout
-            android:id="@+id/mainAct_ListFragContent"
+            android:id="@+id/mainAct_FrameLayout"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="5">

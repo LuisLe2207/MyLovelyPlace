@@ -21,6 +21,9 @@ public final class AppUtils {
     public static final String ADD_EDIT_FRAGMENT_TAG = "ADD_EDIT_FRAGMENT_TAG";
     public static final String DETAIL_FRAGMENT_TAG = "DETAIL_FRAGMENT_TAG";
 
+    public static final String  PORTRAIT_STACK = "PORTRAIT_STACK";
+    public static final String  LANDSCAPE_STACK = "LANDSCAPE_STACK";
+
     public static byte[] imageViewToByte(ImageView img){
 
         RoundedDrawable drawable = (RoundedDrawable) img.getDrawable();

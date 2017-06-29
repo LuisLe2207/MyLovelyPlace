@@ -13,12 +13,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.luisle.interviewtest.MyApp;
 import com.example.luisle.interviewtest.R;
 import com.example.luisle.interviewtest.adapter.PlacesAdapter;
 import com.example.luisle.interviewtest.addeditplace.AddEditPlaceFragment;
 import com.example.luisle.interviewtest.data.Place;
+import com.example.luisle.interviewtest.placedetail.PlaceDetailFragment;
 import com.example.luisle.interviewtest.utils.AppUtils;
 
 import java.util.ArrayList;
@@ -30,6 +32,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static com.example.luisle.interviewtest.utils.AppUtils.ADD_EDIT_FRAGMENT_TAG;
+import static com.example.luisle.interviewtest.utils.AppUtils.DETAIL_FRAGMENT_TAG;
+import static com.example.luisle.interviewtest.utils.AppUtils.LANDSCAPE_STACK;
+import static com.example.luisle.interviewtest.utils.AppUtils.PORTRAIT_STACK;
 
 /**
  * Created by LuisLe on 6/28/2017.
@@ -54,7 +59,7 @@ public class PlacesFragment extends Fragment implements PlacesContract.View, Pla
 
     private PlacesAdapter placesAdapter;
 
-    private boolean deviceIsLanscapeTablet = false;
+    private boolean deviceIsLandscapeTablet = false;
 
     public static PlacesFragment newInstance() {
         return new PlacesFragment();
@@ -71,7 +76,7 @@ public class PlacesFragment extends Fragment implements PlacesContract.View, Pla
         super.onCreate(savedInstanceState);
         placesAdapter = new PlacesAdapter(getContext(), new ArrayList<Place>(0), this);
 
-        deviceIsLanscapeTablet = AppUtils.deviceIsTabletAndInLandscape(getActivity());
+        deviceIsLandscapeTablet = AppUtils.deviceIsTabletAndInLandscape(getActivity());
 
         DaggerPlacesPresenterComponent.builder()
                 .placesRepositoryComponent(((MyApp)getActivity().getApplication()).getRepositoryComponent())
@@ -86,8 +91,12 @@ public class PlacesFragment extends Fragment implements PlacesContract.View, Pla
         View root = inflater.inflate(R.layout.fragment_place_list, container, false);
         ButterKnife.bind(this, root);
 
+        Toast.makeText(getContext(),
+                String.valueOf(getActivity().getSupportFragmentManager().getBackStackEntryCount()),
+                Toast.LENGTH_SHORT).show();
+
         // Check Device Size and Orientation
-        if (deviceIsLanscapeTablet) {
+        if (deviceIsLandscapeTablet) {
             // Device is tablet and in landscape mode
             fabAddPlace.setVisibility(View.INVISIBLE);
         } else {
@@ -140,11 +149,11 @@ public class PlacesFragment extends Fragment implements PlacesContract.View, Pla
 
     @Override
     public void showAddPlaceUi() {
-        if (!deviceIsLanscapeTablet) {
+        if (!deviceIsLandscapeTablet) {
             AddEditPlaceFragment addEditPlaceFragment = AddEditPlaceFragment.newInstance(null);
             FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
             transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.slide_in, R.anim.slide_out);
-            transaction.replace(R.id.mainAct_FrameLayout, addEditPlaceFragment, ADD_EDIT_FRAGMENT_TAG).addToBackStack(null).commit();
+            transaction.replace(R.id.mainAct_FrameLayout, addEditPlaceFragment, ADD_EDIT_FRAGMENT_TAG).addToBackStack(PORTRAIT_STACK).commit();
         }
     }
 
@@ -160,7 +169,15 @@ public class PlacesFragment extends Fragment implements PlacesContract.View, Pla
 
     @Override
     public void showPlaceDetailUI(@NonNull String placeID) {
-
+        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+        PlaceDetailFragment placeDetailFragment = PlaceDetailFragment.newInstance(placeID);
+        transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.slide_in, R.anim.slide_out);
+        if (!deviceIsLandscapeTablet) {
+            transaction.replace(R.id.mainAct_FrameLayout, placeDetailFragment, DETAIL_FRAGMENT_TAG).addToBackStack(PORTRAIT_STACK);
+        } else {
+            transaction.replace(R.id.mainAct_AnotherFragContent, placeDetailFragment, DETAIL_FRAGMENT_TAG).addToBackStack(LANDSCAPE_STACK);
+        }
+        transaction.commit();
     }
 
     @Override
