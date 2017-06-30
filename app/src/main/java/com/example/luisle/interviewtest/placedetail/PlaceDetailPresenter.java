@@ -79,8 +79,8 @@ public class PlaceDetailPresenter implements PlaceDetailContract.Presenter, IPla
     }
 
     @Override
-    public void findRoute(@NonNull Place place) {
-
+    public void findRoute() {
+        view.startDirectionActivity(placeID);
     }
 
     @Override

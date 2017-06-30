@@ -1,7 +1,9 @@
 package com.example.luisle.interviewtest.placedetail;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -20,6 +22,7 @@ import com.example.luisle.interviewtest.MyApp;
 import com.example.luisle.interviewtest.R;
 import com.example.luisle.interviewtest.addeditplace.AddEditPlaceFragment;
 import com.example.luisle.interviewtest.data.Place;
+import com.example.luisle.interviewtest.direction.DirectionActivity;
 import com.example.luisle.interviewtest.places.PlacesFragment;
 import com.example.luisle.interviewtest.utils.AppUtils;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -53,6 +56,7 @@ public class PlaceDetailFragment extends Fragment implements PlaceDetailContract
     PlaceDetailPresenter placeDetailPresenter;
 
     private PlaceDetailContract.Presenter presenter;
+    private AppUtils.Communicator communicator;
 
     @BindView(R.id.imgDetailFrag)
     RoundedImageView placeImage;
@@ -78,6 +82,8 @@ public class PlaceDetailFragment extends Fragment implements PlaceDetailContract
 
     public static final String PLACE_ID = "PlaceID";
 
+    private String placeID;
+
     public static PlaceDetailFragment newInstance(@NonNull String placeID) {
         PlaceDetailFragment placeDetailFragment = new PlaceDetailFragment();
         Bundle bundle = new Bundle();
@@ -85,6 +91,12 @@ public class PlaceDetailFragment extends Fragment implements PlaceDetailContract
         placeDetailFragment.setArguments(bundle);
 
         return placeDetailFragment;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        communicator = (AppUtils.Communicator) context;
     }
 
     @Override
@@ -98,7 +110,7 @@ public class PlaceDetailFragment extends Fragment implements PlaceDetailContract
 
         deviceIsLandscapeTablet = AppUtils.deviceIsTabletAndInLandscape(getActivity());
 
-        String placeID = getArguments().getString(PLACE_ID);
+        placeID = getArguments().getString(PLACE_ID);
 
         DaggerPlaceDetailPresenterComponent.builder()
                 .appModule(new AppModule(getContext()))
@@ -123,6 +135,7 @@ public class PlaceDetailFragment extends Fragment implements PlaceDetailContract
     public void onResume() {
         super.onResume();
         presenter.start();
+        communicator.setActionBarTitle(getContext().getResources().getString(R.string.action_bar_title_detail));
         mapView.onResume();
     }
 
@@ -146,6 +159,11 @@ public class PlaceDetailFragment extends Fragment implements PlaceDetailContract
     @OnClick(R.id.ibtnDetailFrag_Delete)
     public void deletePlace(View view) {
         presenter.openDeleteAlertDlg();
+    }
+
+    @OnClick(R.id.ibtnDetailFrag_Direction)
+    public void getDirection(View view) {
+        presenter.findRoute();
     }
 
     @Override
@@ -244,6 +262,13 @@ public class PlaceDetailFragment extends Fragment implements PlaceDetailContract
         });
 
         alertDialog.setCancelable(true).create().show();
+    }
+
+    @Override
+    public void startDirectionActivity(@NonNull String placeID) {
+        Intent directionActIntent = new Intent(getActivity(), DirectionActivity.class);
+        directionActIntent.putExtra(PLACE_ID, placeID);
+        startActivity(directionActIntent);
     }
 
     @Override

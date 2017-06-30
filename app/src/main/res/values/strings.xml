@@ -20,6 +20,7 @@
     <string name="action_bar_title_add">Add</string>
     <string name="action_bar_title_modify">Modify</string>
     <string name="action_bar_title_detail">Detail</string>
+    <string name="action_bar_title_map">Map</string>
 
     <string name="txt_saving_dialog">Saving &#8230;</string>
     <string name="txt_delete_dialog">Deleting &#8230;</string>

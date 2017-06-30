@@ -19,11 +19,12 @@ public interface PlaceDetailContract {
         void setPlaceOnMap(LatLng latLng, String placeName);
         void setData(@NonNull Place place);
         void showAlertDlg();
+        void startDirectionActivity(@NonNull String placeID);
     }
 
     interface Presenter extends BasePresenter {
         void deletePlace();
-        void findRoute(@NonNull Place place);
+        void findRoute();
         void populatePlace();
         void openEditPlaceUi();
         void openDeleteAlertDlg();

@@ -11,7 +11,7 @@ import com.google.android.gms.maps.model.LatLng;
 public interface ServiceContract {
 
     interface OnDirectionLoaded{
-        void onLoaded(@NonNull String origin, @NonNull String destination,
+        void onLoaded(@NonNull LatLng origin, @NonNull LatLng destination,
                       @NonNull String originAddress, @NonNull String destinationAddress,
                       @NonNull String polylinePoints);
         void onFailed();
@@ -23,5 +23,7 @@ public interface ServiceContract {
     }
 
     void getLocation(@NonNull String placeName, @NonNull String query, @NonNull OnLocationLoaded callback);
+
+    void getDirection(@NonNull String origin, @NonNull String destination, @NonNull OnDirectionLoaded callback);
 
 }

@@ -1,5 +1,6 @@
 package com.example.luisle.interviewtest.map;
 
+import com.example.luisle.interviewtest.map.direction.Direction;
 import com.example.luisle.interviewtest.map.geocoding.Geocoding;
 
 import retrofit2.Call;
@@ -14,7 +15,7 @@ public interface MapsApi {
     @GET("api/geocode/json?key=AIzaSyBfqWvbtt7yQkIZ8Xw3OobOBI5UTiEK-g0")
     Call<Geocoding> getPlaceLocation(@Query("address") String address);
 
-//    @GET("api/directions/json?key=AIzaSyBfqWvbtt7yQkIZ8Xw3OobOBI5UTiEK-g0")
-//    Call<Direction> getDirection(@Query("origin") String origin, @Query("destination") String destination);
+    @GET("api/directions/json?key=AIzaSyBfqWvbtt7yQkIZ8Xw3OobOBI5UTiEK-g0")
+    Call<Direction> getDirection(@Query("origin") String origin, @Query("destination") String destination);
 
 }

@@ -20,7 +20,7 @@ import static com.example.luisle.interviewtest.utils.AppUtils.LANDSCAPE_STACK;
 import static com.example.luisle.interviewtest.utils.AppUtils.PLACE_FRAGMENT_TAG;
 import static com.example.luisle.interviewtest.utils.AppUtils.PORTRAIT_STACK;
 
-public class MainActivity extends AppCompatActivity implements AppUtils.Communicator{
+public class MainActivity extends AppCompatActivity implements AppUtils.Communicator {
 
     @BindView(R.id.mainAct_Toolbar)
     Toolbar toolbar;

@@ -1,7 +1,9 @@
 package com.example.luisle.interviewtest.map;
 
+import android.os.Handler;
 import android.support.annotation.NonNull;
 
+import com.example.luisle.interviewtest.map.direction.Direction;
 import com.example.luisle.interviewtest.map.geocoding.Geocoding;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -17,7 +19,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Created by LuisLe on 6/30/2017.
  */
 
-public class Service implements ServiceContract{
+public class Service implements ServiceContract {
 
     private Retrofit retrofit;
 
@@ -60,6 +62,40 @@ public class Service implements ServiceContract{
 
             @Override
             public void onFailure(Call<Geocoding> call, Throwable t) {
+                callback.onFailed();
+            }
+        });
+    }
+
+    @Override
+    public void getDirection(@NonNull String origin, @NonNull String destination, @NonNull final OnDirectionLoaded callback) {
+        MapsApi mapsApi = retrofit.create(MapsApi.class);
+        Call<Direction> call = mapsApi.getDirection(origin, destination);
+        call.enqueue(new Callback<Direction>() {
+            @Override
+            public void onResponse(final Call<Direction> call, Response<Direction> response) {
+                Direction direction = response.body();
+                if (direction != null) {
+                    final LatLng origin = new LatLng(
+                            direction.getRoutes().get(0).getLegs().get(0).getStart_location().getLat(),
+                            direction.getRoutes().get(0).getLegs().get(0).getStart_location().getLng());
+                    final LatLng destination = new LatLng(
+                            direction.getRoutes().get(0).getLegs().get(0).getEnd_location().getLat(),
+                            direction.getRoutes().get(0).getLegs().get(0).getEnd_location().getLng());
+                    final String originAddress = direction.getRoutes().get(0).getLegs().get(0).getStart_address();
+                    final String destinationAddress = direction.getRoutes().get(0).getLegs().get(0).getEnd_address();
+                    final String polylinePoints = direction.getRoutes().get(0).getOverview_polyline().getPoints();
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            callback.onLoaded(origin, destination, originAddress, destinationAddress, polylinePoints);
+                        }
+                    }, 1000);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Direction> call, Throwable t) {
                 callback.onFailed();
             }
         });
