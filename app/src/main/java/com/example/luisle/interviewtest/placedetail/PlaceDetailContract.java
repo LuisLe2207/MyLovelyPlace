@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import com.example.luisle.interviewtest.BasePresenter;
 import com.example.luisle.interviewtest.BaseView;
 import com.example.luisle.interviewtest.data.Place;
+import com.google.android.gms.maps.model.LatLng;
 
 /**
  * Created by LuisLe on 6/28/2017.
@@ -15,6 +16,7 @@ public interface PlaceDetailContract {
     interface View extends BaseView<Presenter>, BaseView.ViewProgress {
         void showPlaces();
         void showPlaceEditUi(@NonNull String placeID);
+        void setPlaceOnMap(LatLng latLng, String placeName);
         void setData(@NonNull Place place);
         void showAlertDlg();
     }

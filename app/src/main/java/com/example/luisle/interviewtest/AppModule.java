@@ -14,6 +14,7 @@ public final class AppModule {
 
     private final Context context;
 
+
     public AppModule(Context context) {
         this.context = context;
     }

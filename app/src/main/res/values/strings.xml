@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">InterviewTest</string>
+    <string name="google_maps_key">AIzaSyBfqWvbtt7yQkIZ8Xw3OobOBI5UTiEK-g0</string>
+
+
     <string name="text_no_data_available">No data available</string>
     <string name="text_place_name">Place Name</string>
     <string name="text_place_address">Place Address</string>

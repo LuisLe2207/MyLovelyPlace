@@ -1,11 +1,18 @@
 package com.example.luisle.interviewtest.placedetail;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 
+import com.example.luisle.interviewtest.DaggerAppComponent;
+import com.example.luisle.interviewtest.MyApp;
 import com.example.luisle.interviewtest.data.Place;
 import com.example.luisle.interviewtest.data.source.PlacesRepository;
 import com.example.luisle.interviewtest.data.source.db.IPlacesDataSource;
+import com.example.luisle.interviewtest.map.Service;
+import com.example.luisle.interviewtest.map.ServiceContract;
+import com.google.android.gms.maps.model.LatLng;
 
 import javax.inject.Inject;
 
@@ -13,25 +20,43 @@ import javax.inject.Inject;
  * Created by LuisLe on 6/28/2017.
  */
 
-public class PlaceDetailPresenter implements PlaceDetailContract.Presenter, IPlacesDataSource.GetPlaceCallback{
+public class PlaceDetailPresenter implements PlaceDetailContract.Presenter, IPlacesDataSource.GetPlaceCallback, ServiceContract.OnLocationLoaded{
+
+    @Inject
+    Service service;
 
     private final PlacesRepository placesRepository;
 
     private final PlaceDetailContract.View view;
 
+    private Context context;
+
     @NonNull
     private final String placeID;
 
     @Inject
-    public PlaceDetailPresenter(PlacesRepository placesRepository, PlaceDetailContract.View view, @NonNull String placeID) {
+    public PlaceDetailPresenter(PlacesRepository placesRepository, PlaceDetailContract.View view, @NonNull String placeID, Context context) {
         this.placesRepository = placesRepository;
         this.view = view;
         this.placeID = placeID;
+        this.context = context;
     }
 
     @Inject
     void setupPresenter() {
         view.setPresenter(this);
+
+        final Activity activity = (Activity) context;
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                DaggerAppComponent.builder()
+                        .serviceComponent(((MyApp)activity.getApplication()).getServiceComponent()).build()
+                        .inject(PlaceDetailPresenter.this);
+            }
+        }, 2000);
+
     }
 
     @Override
@@ -50,6 +75,7 @@ public class PlaceDetailPresenter implements PlaceDetailContract.Presenter, IPla
                 view.showPlaces();
             }
         }, 2000);
+
     }
 
     @Override
@@ -75,10 +101,33 @@ public class PlaceDetailPresenter implements PlaceDetailContract.Presenter, IPla
     @Override
     public void onPlaceLoaded(Place place) {
         view.setData(place);
+
+        final String placeAddress = place.getPlaceAddress();
+        final String placeName = place.getPlaceName();
+
+        final String query = placeName + placeAddress;
+
+        service.getLocation(placeName, query, this);
+
     }
 
     @Override
     public void onDataNotAvailable() {
+
+    }
+
+    @Override
+    public void onLoaded(@NonNull final LatLng latLng, @NonNull final String placeName) {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                view.setPlaceOnMap(latLng, placeName);
+            }
+        }, 2000);
+    }
+
+    @Override
+    public void onFailed() {
 
     }
 }

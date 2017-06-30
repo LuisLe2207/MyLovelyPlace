@@ -15,12 +15,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import com.example.luisle.interviewtest.AppModule;
 import com.example.luisle.interviewtest.MyApp;
 import com.example.luisle.interviewtest.R;
 import com.example.luisle.interviewtest.addeditplace.AddEditPlaceFragment;
 import com.example.luisle.interviewtest.data.Place;
 import com.example.luisle.interviewtest.places.PlacesFragment;
 import com.example.luisle.interviewtest.utils.AppUtils;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.makeramen.roundedimageview.RoundedImageView;
 
 import javax.inject.Inject;
@@ -38,7 +47,7 @@ import static com.example.luisle.interviewtest.utils.AppUtils.PORTRAIT_STACK;
  * Created by LuisLe on 6/28/2017.
  */
 
-public class PlaceDetailFragment extends Fragment implements PlaceDetailContract.View{
+public class PlaceDetailFragment extends Fragment implements PlaceDetailContract.View, OnMapReadyCallback{
 
     @Inject
     PlaceDetailPresenter placeDetailPresenter;
@@ -57,6 +66,11 @@ public class PlaceDetailFragment extends Fragment implements PlaceDetailContract
     @BindView(R.id.edtDetailFrag_PlaceDescription)
     EditText edtPlaceDescription;
 
+    @BindView(R.id.mvDetailFrag_Map)
+    MapView mapView;
+
+
+    private GoogleMap googleMap;
 
     private ProgressDialog progressDialog;
 
@@ -87,6 +101,7 @@ public class PlaceDetailFragment extends Fragment implements PlaceDetailContract
         String placeID = getArguments().getString(PLACE_ID);
 
         DaggerPlaceDetailPresenterComponent.builder()
+                .appModule(new AppModule(getContext()))
                 .placeDetailPresenterModule(new PlaceDetailPresenterModule(this, placeID))
                 .placesRepositoryComponent(((MyApp) getActivity().getApplication()).getRepositoryComponent()).build()
                 .inject(this);
@@ -98,6 +113,9 @@ public class PlaceDetailFragment extends Fragment implements PlaceDetailContract
         View root = inflater.inflate(R.layout.fragment_place_detail, container, false);
         ButterKnife.bind(this, root);
 
+        mapView.onCreate(savedInstanceState);
+        mapView.getMapAsync(this);
+
         return root;
     }
 
@@ -105,6 +123,19 @@ public class PlaceDetailFragment extends Fragment implements PlaceDetailContract
     public void onResume() {
         super.onResume();
         presenter.start();
+        mapView.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mapView.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mapView.onDestroy();
     }
 
     @OnClick(R.id.ibtnDetailFrag_Edit)
@@ -167,6 +198,19 @@ public class PlaceDetailFragment extends Fragment implements PlaceDetailContract
     }
 
     @Override
+    public void setPlaceOnMap(LatLng latLng, String placeName) {
+        float zoom = 15;
+        MarkerOptions markerOptions = new MarkerOptions()
+                                            .position(latLng)
+                                            .title(placeName)
+                                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+        Marker marker = googleMap.addMarker(markerOptions);
+        marker.showInfoWindow();
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
+
+    }
+
+    @Override
     public void setData(@NonNull Place place) {
         byte[] imgByte = place.getPlaceImage();
         if (imgByte != null) {
@@ -200,5 +244,12 @@ public class PlaceDetailFragment extends Fragment implements PlaceDetailContract
         });
 
         alertDialog.setCancelable(true).create().show();
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        this.googleMap = googleMap;
+        this.googleMap.getUiSettings().setAllGesturesEnabled(false);
+        this.googleMap.getUiSettings().setMapToolbarEnabled(false);
     }
 }
