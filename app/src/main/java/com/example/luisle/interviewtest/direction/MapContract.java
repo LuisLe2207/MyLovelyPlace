@@ -1,5 +1,7 @@
 package com.example.luisle.interviewtest.direction;
 
+import android.location.Location;
+
 import com.example.luisle.interviewtest.BasePresenter;
 import com.example.luisle.interviewtest.BaseView;
 import com.google.android.gms.maps.model.LatLng;
@@ -16,6 +18,7 @@ public interface MapContract {
     }
 
     interface Presenter extends BasePresenter {
+        void getRoutes(Location currentLocation);
         void setToolbarTitle(String title);
     }
 

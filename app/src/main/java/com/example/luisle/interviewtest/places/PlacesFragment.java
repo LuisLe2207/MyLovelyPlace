@@ -13,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.luisle.interviewtest.MyApp;
 import com.example.luisle.interviewtest.R;
@@ -90,10 +89,6 @@ public class PlacesFragment extends Fragment implements PlacesContract.View, Pla
 
         View root = inflater.inflate(R.layout.fragment_place_list, container, false);
         ButterKnife.bind(this, root);
-
-        Toast.makeText(getContext(),
-                String.valueOf(getActivity().getSupportFragmentManager().getBackStackEntryCount()),
-                Toast.LENGTH_SHORT).show();
 
         // Check Device Size and Orientation
         if (deviceIsLandscapeTablet) {

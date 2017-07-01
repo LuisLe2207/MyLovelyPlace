@@ -2,6 +2,7 @@ package com.example.luisle.interviewtest.direction;
 
 import android.app.Activity;
 import android.content.Context;
+import android.location.Location;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 
@@ -20,7 +21,7 @@ import javax.inject.Inject;
  * Created by LuisLe on 6/30/2017.
  */
 
-public class MapPresenter implements MapContract.Presenter{
+public class MapPresenter implements MapContract.Presenter, IPlacesDataSource.GetPlaceCallback {
 
     @Inject
     Service service;
@@ -33,6 +34,8 @@ public class MapPresenter implements MapContract.Presenter{
 
     @NonNull
     private final String placeID;
+
+    private Place destinationPlace;
 
     @Inject
     public MapPresenter(PlacesRepository placesRepository, MapContract.View view, Context context, @NonNull String placeID) {
@@ -52,46 +55,43 @@ public class MapPresenter implements MapContract.Presenter{
             @Override
             public void run() {
                 DaggerAppComponent.builder()
-                        .serviceComponent(((MyApp)activity.getApplication()).getServiceComponent()).build()
+                        .serviceComponent(((MyApp) activity.getApplication()).getServiceComponent()).build()
                         .inject(MapPresenter.this);
             }
         }, 2000);
     }
 
+    void setDestinationPlace(Place place) {
+        this.destinationPlace = place;
+    }
+
+
     @Override
     public void start() {
+        placesRepository.getPlace(placeID, this);
+    }
+
+    @Override
+    public void getRoutes(Location currentLocation) {
         view.showProgressDlg();
-        placesRepository.getPlace(placeID, new IPlacesDataSource.GetPlaceCallback() {
+        String startPoint = currentLocation.getLatitude() + "," + currentLocation.getLongitude();
+        String endPoint = destinationPlace.getPlaceName() + " " + destinationPlace.getPlaceAddress();
+        service.getDirection(startPoint, endPoint, new ServiceContract.OnDirectionLoaded() {
             @Override
-            public void onPlaceLoaded(Place place) {
-
-                setToolbarTitle(place.getPlaceName());
-
-                String startPoint = "Duong 11, Phuong 11, Go Vap, Tp.Ho Chi Minh";
-                String endPoint = place.getPlaceName() + " " + place.getPlaceAddress();
-                service.getDirection(startPoint, endPoint, new ServiceContract.OnDirectionLoaded() {
+            public void onLoaded(@NonNull LatLng origin, @NonNull LatLng destination,
+                                 @NonNull String originAddress, @NonNull String destinationAddress,
+                                 @NonNull String polylinePoints) {
+                view.drawRoutes(origin, destination, originAddress, destinationAddress, polylinePoints);
+                new Handler().postDelayed(new Runnable() {
                     @Override
-                    public void onLoaded(@NonNull LatLng origin, @NonNull LatLng destination,
-                                         @NonNull String originAddress, @NonNull String destinationAddress,
-                                         @NonNull String polylinePoints) {
-                        view.drawRoutes(origin, destination, originAddress, destinationAddress, polylinePoints);
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                view.hideProgressDlg();
-                            }
-                        }, 2000);
+                    public void run() {
+                        view.hideProgressDlg();
                     }
-
-                    @Override
-                    public void onFailed() {
-
-                    }
-                });
+                }, 1000);
             }
 
             @Override
-            public void onDataNotAvailable() {
+            public void onFailed() {
 
             }
         });
@@ -100,5 +100,16 @@ public class MapPresenter implements MapContract.Presenter{
     @Override
     public void setToolbarTitle(String title) {
         view.setToolbarTitle(title);
+    }
+
+    @Override
+    public void onPlaceLoaded(Place place) {
+        setDestinationPlace(place);
+        setToolbarTitle(place.getPlaceName());
+    }
+
+    @Override
+    public void onDataNotAvailable() {
+
     }
 }

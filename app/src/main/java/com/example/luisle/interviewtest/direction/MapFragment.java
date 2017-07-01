@@ -1,25 +1,35 @@
 package com.example.luisle.interviewtest.direction;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.luisle.interviewtest.AppModule;
 import com.example.luisle.interviewtest.MyApp;
 import com.example.luisle.interviewtest.R;
 import com.example.luisle.interviewtest.utils.AppUtils;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -39,26 +49,40 @@ import butterknife.ButterKnife;
  * Created by LuisLe on 6/30/2017.
  */
 
-public class MapFragment extends Fragment implements MapContract.View, OnMapReadyCallback{
+public class MapFragment extends Fragment implements MapContract.View, OnMapReadyCallback,
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener{
 
+    // Layout
+    @BindView(R.id.mvMapFrag_Map)
+    MapView mapView;
+
+    // Presenter
     @Inject
     MapPresenter mapPresenter;
 
     private MapContract.Presenter presenter;
     private AppUtils.Communicator communicator;
 
-    @BindView(R.id.mvMapFrag_Map)
-    MapView mapView;
-
-    private GoogleMap googleMap;
 
     private ProgressDialog progressDialog;
+    public static final String PLACE_ID = "PlaceID";
+    public static final int PERMISSIONS_REQUEST_LOCATION = 1;
+
+    // Google map
+    private GoogleMap googleMap;
+    private GoogleApiClient apiClient;
+    private static final int DEFAULT_ZOOM = 15;
+
+    // The geographical location where the device is currently located. That is, the last-known
+    // location retrieved by the Fused Location Provider.
+    private Location lastKnownLocation;
+    private LocationRequest locationRequest;
+
 
     private Marker originMarker, destinationMarker;
     private List<LatLng> decodedPath;
     private List<Polyline> polylineList = new ArrayList<>();
-
-    public static final String PLACE_ID = "PlaceID";
 
     public static MapFragment newInstance(@NonNull String placeID) {
         MapFragment mapFragment = new MapFragment();
@@ -80,7 +104,7 @@ public class MapFragment extends Fragment implements MapContract.View, OnMapRead
         super.onCreate(savedInstanceState);
 
         progressDialog = new ProgressDialog(getContext());
-        progressDialog.setMessage(getContext().getResources().getString(R.string.txt_delete_dialog));
+        progressDialog.setMessage(getContext().getResources().getString(R.string.txt_finding_dialog));
         progressDialog.setIndeterminate(true);
         progressDialog.setCanceledOnTouchOutside(false);
 
@@ -104,14 +128,18 @@ public class MapFragment extends Fragment implements MapContract.View, OnMapRead
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
 
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            checkLocationPermission();
+        }
+
         return root;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        presenter.start();
         mapView.onResume();
+        presenter.start();
     }
 
     @Override
@@ -124,6 +152,36 @@ public class MapFragment extends Fragment implements MapContract.View, OnMapRead
     public void onDestroy() {
         super.onDestroy();
         mapView.onDestroy();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSIONS_REQUEST_LOCATION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted. Do the
+                    // contacts-related task you need to do.
+                    if (ContextCompat.checkSelfPermission(getContext(),
+                            Manifest.permission.ACCESS_FINE_LOCATION)
+                            == PackageManager.PERMISSION_GRANTED) {
+
+                        if (apiClient == null) {
+                            buildGoogleMapApiClient();
+                        }
+                        googleMap.setMyLocationEnabled(true);
+                    }
+
+                } else {
+
+                    // Permission denied, Disable the functionality that depends on this permission.
+                    Toast.makeText(getContext(), "permission denied", Toast.LENGTH_LONG).show();
+                }
+                return;
+            }
+        }
     }
 
     @Override
@@ -154,7 +212,7 @@ public class MapFragment extends Fragment implements MapContract.View, OnMapRead
         originMarker = googleMap.addMarker(new MarkerOptions().position(origin).title(originAddress));
         destinationMarker = googleMap.addMarker(new MarkerOptions().position(destination).title(destinationAddress));
 
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(origin, 15));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(origin, DEFAULT_ZOOM));
     }
 
     @Override
@@ -175,16 +233,107 @@ public class MapFragment extends Fragment implements MapContract.View, OnMapRead
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
-        if (ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(getContext(),
+                    Manifest.permission.ACCESS_FINE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED) {
+                buildGoogleMapApiClient();
+                this.googleMap.setMyLocationEnabled(true);
+            }
         }
-        this.googleMap.setMyLocationEnabled(true);
+        else {
+            buildGoogleMapApiClient();
+            this.googleMap.setMyLocationEnabled(true);
+        }
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        locationRequest = new LocationRequest();
+        locationRequest.setInterval(1000);
+        locationRequest.setFastestInterval(1000);
+        locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+        if (ContextCompat.checkSelfPermission(getContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            LocationServices.FusedLocationApi.requestLocationUpdates(apiClient, locationRequest, new com.google.android.gms.location.LocationListener() {
+                @Override
+                public void onLocationChanged(Location location) {
+                    lastKnownLocation = location;
+                    if (originMarker != null) {
+                        originMarker.remove();
+                    }
+
+                    //Place current location marker
+                    LatLng currLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+                    MarkerOptions markerOptions = new MarkerOptions();
+                    markerOptions.position(currLatLng);
+                    markerOptions.title("Current Position");
+                    markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+                    originMarker = googleMap.addMarker(markerOptions);
+
+                    //move map camera
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLng(currLatLng));
+                    googleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+
+                    presenter.getRoutes(lastKnownLocation);
+
+                    //stop location updates
+                    if (apiClient != null) {
+                        LocationServices.FusedLocationApi.removeLocationUpdates(apiClient, this);
+                    }
+                }
+            });
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
+    private void buildGoogleMapApiClient() {
+        apiClient = new GoogleApiClient.Builder(getContext())
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+        apiClient.connect();
+    }
+
+    public boolean checkLocationPermission(){
+        if (ContextCompat.checkSelfPermission(getContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Asking user if explanation is needed
+            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
+                    Manifest.permission.ACCESS_FINE_LOCATION)) {
+
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+
+                //Prompt the user once explanation has been shown
+                ActivityCompat.requestPermissions(getActivity(),
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        PERMISSIONS_REQUEST_LOCATION);
+
+
+            } else {
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(getActivity(),
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        PERMISSIONS_REQUEST_LOCATION);
+            }
+            return false;
+        } else {
+            return true;
+        }
     }
 }

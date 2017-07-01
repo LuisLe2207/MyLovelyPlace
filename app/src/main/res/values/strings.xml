@@ -24,6 +24,7 @@
 
     <string name="txt_saving_dialog">Saving &#8230;</string>
     <string name="txt_delete_dialog">Deleting &#8230;</string>
+    <string name="txt_finding_dialog">Finding &#8230;</string>
     <string name="txt_delete_alert_dialog">Do you want to delete </string>
 
 

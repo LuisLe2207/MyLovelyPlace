@@ -7,7 +7,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.widget.Toast;
 
 import com.example.luisle.interviewtest.addeditplace.AddEditPlaceFragment;
 import com.example.luisle.interviewtest.places.PlacesFragment;
@@ -54,7 +53,6 @@ public class MainActivity extends AppCompatActivity implements AppUtils.Communic
         getSupportFragmentManager().popBackStack(PORTRAIT_STACK, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         transaction.commit();
 
-        Toast.makeText(getApplicationContext(), String.valueOf(getSupportFragmentManager().getBackStackEntryCount()), Toast.LENGTH_SHORT).show();
     }
 
     @Override
