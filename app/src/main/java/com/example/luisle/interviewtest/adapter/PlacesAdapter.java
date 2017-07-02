@@ -37,6 +37,13 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.PlaceViewH
         this.callback = callback;
     }
 
+    public PlacesAdapter(Context context, List<Place> places, LayoutInflater layoutInflater, OnClickCallback callback) {
+        setPlaces(places);
+        this.layoutInflater = layoutInflater;
+        this.callback = callback;
+    }
+
+
     void setPlaces(List<Place> places) {
         this.places = places;
     }
