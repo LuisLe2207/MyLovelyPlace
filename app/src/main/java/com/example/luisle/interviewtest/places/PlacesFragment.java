@@ -1,6 +1,7 @@
 package com.example.luisle.interviewtest.places;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -19,6 +20,7 @@ import com.example.luisle.interviewtest.R;
 import com.example.luisle.interviewtest.adapter.PlacesAdapter;
 import com.example.luisle.interviewtest.addeditplace.AddEditPlaceFragment;
 import com.example.luisle.interviewtest.data.Place;
+import com.example.luisle.interviewtest.direction.DirectionActivity;
 import com.example.luisle.interviewtest.placedetail.PlaceDetailFragment;
 import com.example.luisle.interviewtest.utils.AppUtils;
 
@@ -44,9 +46,6 @@ public class PlacesFragment extends Fragment implements PlacesContract.View, Pla
     @Inject
     PlacesPresenter placesPresenter;
 
-    private PlacesContract.Presenter presenter;
-    private AppUtils.Communicator communicator;
-
     @BindView(R.id.txtListFrag_NoData)
     TextView txtNoData;
 
@@ -56,9 +55,14 @@ public class PlacesFragment extends Fragment implements PlacesContract.View, Pla
     @BindView(R.id.rcvListFrag_Places)
     RecyclerView rcvPlaces;
 
+    private PlacesContract.Presenter presenter;
+    private AppUtils.Communicator communicator;
+
     private PlacesAdapter placesAdapter;
 
     private boolean deviceIsLandscapeTablet = false;
+
+    public static final String PLACE_ID = "PlaceID";
 
     public static PlacesFragment newInstance() {
         return new PlacesFragment();
@@ -77,6 +81,7 @@ public class PlacesFragment extends Fragment implements PlacesContract.View, Pla
 
         deviceIsLandscapeTablet = AppUtils.deviceIsTabletAndInLandscape(getActivity());
 
+        // Create the presenter
         DaggerPlacesPresenterComponent.builder()
                 .placesRepositoryComponent(((MyApp)getActivity().getApplication()).getRepositoryComponent())
                 .placesPresenterModule(new PlacesPresenterModule(this)).build()
@@ -176,7 +181,19 @@ public class PlacesFragment extends Fragment implements PlacesContract.View, Pla
     }
 
     @Override
-    public void startDirectionActivity(View v, Place place) {
+    public void startDirectionActivity(@NonNull String placeID) {
+        Intent directionActIntent = new Intent(getActivity(), DirectionActivity.class);
+        directionActIntent.putExtra(PLACE_ID, placeID);
+        startActivity(directionActIntent);
+    }
 
+    @Override
+    public void onPlaceClick(@NonNull String placeID) {
+        presenter.openPlaceDetail(placeID);
+    }
+
+    @Override
+    public void onGetDirectionClick(View v, Place place) {
+        presenter.openDirectionActivity(place.getPlaceID());
     }
 }

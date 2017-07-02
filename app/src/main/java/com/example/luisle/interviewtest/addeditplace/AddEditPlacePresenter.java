@@ -1,5 +1,6 @@
 package com.example.luisle.interviewtest.addeditplace;
 
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -68,15 +69,13 @@ public class AddEditPlacePresenter implements AddEditPlaceContract.Presenter, Ge
             Place place = new Place(placeID, placeName, placeAddress, placeDescription, placeImage);
             placesRepository.updatePlace(place);
         }
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                view.hideProgressDlg();
-//                view.redirectUI(isNewPlace(), placeID);
-//            }
-//        }, 2000);
-        view.hideProgressDlg();
-        view.redirectUI(isNewPlace(), placeID);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                view.hideProgressDlg();
+                view.redirectUI(isNewPlace(), placeID);
+            }
+        }, 2000);
     }
 
     @Override

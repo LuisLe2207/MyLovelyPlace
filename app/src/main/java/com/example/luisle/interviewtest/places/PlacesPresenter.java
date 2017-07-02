@@ -1,5 +1,7 @@
 package com.example.luisle.interviewtest.places;
 
+import android.support.annotation.NonNull;
+
 import com.example.luisle.interviewtest.data.Place;
 import com.example.luisle.interviewtest.data.source.PlacesRepository;
 import com.example.luisle.interviewtest.data.source.db.IPlacesDataSource;
@@ -54,5 +56,15 @@ public class PlacesPresenter implements PlacesContract.Presenter{
     @Override
     public void addNewPlace() {
         view.showAddPlaceUi();
+    }
+
+    @Override
+    public void openPlaceDetail(@NonNull String placeID) {
+        view.showPlaceDetailUI(placeID);
+    }
+
+    @Override
+    public void openDirectionActivity(@NonNull String placeID) {
+        view.startDirectionActivity(placeID);
     }
 }

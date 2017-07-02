@@ -37,13 +37,6 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.PlaceViewH
         this.callback = callback;
     }
 
-    public PlacesAdapter(Context context, List<Place> places, LayoutInflater layoutInflater, OnClickCallback callback) {
-        setPlaces(places);
-        this.layoutInflater = layoutInflater;
-        this.callback = callback;
-    }
-
-
     void setPlaces(List<Place> places) {
         this.places = places;
     }
@@ -95,7 +88,7 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.PlaceViewH
         @BindView(R.id.ibtnPlaceRow_Direction)
         ImageButton iBtnGetDirection;
 
-        public PlaceViewHolder(View itemView) {
+        PlaceViewHolder(View itemView) {
             super(itemView);
 
             ButterKnife.bind(this, itemView);
@@ -107,7 +100,7 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.PlaceViewH
                 public void onClick(View view) {
                     int position = getLayoutPosition();
                     Place place = places.get(position);
-                    callback.startDirectionActivity(view, place);
+                    callback.onGetDirectionClick(view, place);
                 }
             });
         }
@@ -116,12 +109,12 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.PlaceViewH
         public void onClick(View view) {
             int position = getLayoutPosition();
             Place place = places.get(position);
-            callback.showPlaceDetailUI(place.getPlaceID());
+            callback.onPlaceClick(place.getPlaceID());
         }
     }
 
     public interface OnClickCallback {
-        void showPlaceDetailUI(@NonNull String placeID);
-        void startDirectionActivity(View v, Place place);
+        void onPlaceClick(@NonNull String placeID);
+        void onGetDirectionClick(View v, Place place);
     }
 }

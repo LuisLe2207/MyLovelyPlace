@@ -96,6 +96,7 @@ public class AddEditPlaceFragment extends Fragment implements AddEditPlaceContra
 
         String placeID = getArguments().getString(PLACE_ID);
 
+        // Create the presenter
         DaggerAddEditPlacePresenterComponent.builder()
                 .addEditPlacePresenterModule(new AddEditPlacePresenterModule(this, placeID))
                 .placesRepositoryComponent(((MyApp) getActivity().getApplication()).getRepositoryComponent()).build()
@@ -137,20 +138,13 @@ public class AddEditPlaceFragment extends Fragment implements AddEditPlaceContra
         String placeAddress = edtPlaceAddress.getText().toString().trim();
         String placeDescription = edtPlaceDescription.getText().toString().trim();
 
-        switch (Place.validate(placeName, placeAddress, placeDescription)) {
-            case 1:
-                edtPlaceName.setError(error);
-                break;
-            case 2:
-                edtPlaceAddress.setError(error);
-                break;
-            case 3:
-                edtPlaceDescription.setError(error);
-                break;
-            case 0:
-                byte[] placeImageByte = AppUtils.imageViewToByte(placeImage);
-                presenter.save(placeName, placeAddress, placeDescription, placeImageByte);
-                break;
+        if (!Place.validate(placeName, placeAddress, placeDescription)) {
+            edtPlaceName.setError(error);
+            edtPlaceAddress.setError(error);
+            edtPlaceDescription.setError(error);
+        } else {
+            byte[] placeImageByte = AppUtils.imageViewToByte(placeImage);
+            presenter.save(placeName, placeAddress, placeDescription, placeImageByte);
         }
     }
 

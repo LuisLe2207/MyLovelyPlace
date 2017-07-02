@@ -124,19 +124,11 @@ public class Place {
         return hashcode;
     }
 
-    public static int validate(String name, String address, String description) {
-        if (TextUtils.isEmpty(name)) {
-            return 1;
+    public static boolean validate(String name, String address, String description) {
+        if (TextUtils.isEmpty(name) || TextUtils.isEmpty(address) || TextUtils.isEmpty(description)) {
+            return false;
         }
 
-        if (TextUtils.isEmpty(address)) {
-            return 2;
-        }
-
-        if (TextUtils.isEmpty(description)) {
-            return 3;
-        }
-
-        return 0;
+        return true;
     }
 }

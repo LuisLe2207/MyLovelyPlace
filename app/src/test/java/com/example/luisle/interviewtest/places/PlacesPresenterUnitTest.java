@@ -15,6 +15,7 @@ import org.mockito.MockitoAnnotations;
 import java.util.List;
 
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 
 /**
@@ -65,5 +66,21 @@ public class PlacesPresenterUnitTest {
         placesPresenter.addNewPlace();
 
         verify(view).showAddPlaceUi();
+    }
+
+    @Test
+    public void clickOnPlace_ShowPlaceDetailUI() {
+        String placeID = "1";
+        placesPresenter.openPlaceDetail(placeID);
+
+        verify(view).showPlaceDetailUI(eq(placeID));
+    }
+
+    @Test
+    public void clickOnGetDirectionIcon_OpenDirectionActivity() {
+        String placeID = "1";
+        placesPresenter.openDirectionActivity(placeID);
+
+        verify(view).startDirectionActivity(eq(placeID));
     }
 }

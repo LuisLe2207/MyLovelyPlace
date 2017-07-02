@@ -36,9 +36,8 @@ public class MainActivity extends AppCompatActivity implements AppUtils.Communic
         actionBar = getSupportActionBar();
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
-
         PlacesFragment placeFragment = PlacesFragment.newInstance();
+
         if (!AppUtils.deviceIsTabletAndInLandscape(MainActivity.this)) {
             transaction.replace(R.id.mainAct_FrameLayout, placeFragment, PLACE_FRAGMENT_TAG);
 

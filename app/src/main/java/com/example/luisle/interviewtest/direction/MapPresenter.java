@@ -26,14 +26,14 @@ public class MapPresenter implements MapContract.Presenter, IPlacesDataSource.Ge
     @Inject
     Service service;
 
+    @NonNull
+    private final String placeID;
+
     private final PlacesRepository placesRepository;
 
     private final MapContract.View view;
 
     private Context context;
-
-    @NonNull
-    private final String placeID;
 
     private Place destinationPlace;
 
@@ -51,6 +51,7 @@ public class MapPresenter implements MapContract.Presenter, IPlacesDataSource.Ge
 
         final Activity activity = (Activity) context;
 
+        // Create the service
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -61,7 +62,7 @@ public class MapPresenter implements MapContract.Presenter, IPlacesDataSource.Ge
         }, 2000);
     }
 
-    void setDestinationPlace(Place place) {
+    private void setDestinationPlace(Place place) {
         this.destinationPlace = place;
     }
 
@@ -69,11 +70,12 @@ public class MapPresenter implements MapContract.Presenter, IPlacesDataSource.Ge
     @Override
     public void start() {
         placesRepository.getPlace(placeID, this);
+        view.showProgressDlg();
     }
 
     @Override
     public void getRoutes(Location currentLocation) {
-        view.showProgressDlg();
+
         String startPoint = currentLocation.getLatitude() + "," + currentLocation.getLongitude();
         String endPoint = destinationPlace.getPlaceName() + " " + destinationPlace.getPlaceAddress();
         service.getDirection(startPoint, endPoint, new ServiceContract.OnDirectionLoaded() {
@@ -87,7 +89,7 @@ public class MapPresenter implements MapContract.Presenter, IPlacesDataSource.Ge
                     public void run() {
                         view.hideProgressDlg();
                     }
-                }, 1000);
+                }, 2000);
             }
 
             @Override

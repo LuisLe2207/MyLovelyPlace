@@ -25,14 +25,14 @@ public class PlaceDetailPresenter implements PlaceDetailContract.Presenter, IPla
     @Inject
     Service service;
 
+    @NonNull
+    private final String placeID;
+
     private final PlacesRepository placesRepository;
 
     private final PlaceDetailContract.View view;
 
     private Context context;
-
-    @NonNull
-    private final String placeID;
 
     @Inject
     public PlaceDetailPresenter(PlacesRepository placesRepository, PlaceDetailContract.View view, @NonNull String placeID, Context context) {
@@ -48,6 +48,7 @@ public class PlaceDetailPresenter implements PlaceDetailContract.Presenter, IPla
 
         final Activity activity = (Activity) context;
 
+        // Create the service
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -107,6 +108,7 @@ public class PlaceDetailPresenter implements PlaceDetailContract.Presenter, IPla
 
         final String query = placeName + placeAddress;
 
+        // Get place's location
         service.getLocation(placeName, query, this);
 
     }

@@ -51,13 +51,11 @@ import butterknife.ButterKnife;
 
 public class MapFragment extends Fragment implements MapContract.View, OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener{
+        GoogleApiClient.OnConnectionFailedListener {
 
-    // Layout
     @BindView(R.id.mvMapFrag_Map)
     MapView mapView;
 
-    // Presenter
     @Inject
     MapPresenter mapPresenter;
 
@@ -110,6 +108,7 @@ public class MapFragment extends Fragment implements MapContract.View, OnMapRead
 
         String placeID = getArguments().getString(PLACE_ID);
 
+        // Create the presenter
         DaggerMapPresenterComponent.builder()
                 .appModule(new AppModule(getContext()))
                 .mapPresenterModule(new MapPresenterModule(this, placeID))
@@ -209,8 +208,10 @@ public class MapFragment extends Fragment implements MapContract.View, OnMapRead
 
         polylineList.add(googleMap.addPolyline(polylineOptions));
 
-        originMarker = googleMap.addMarker(new MarkerOptions().position(origin).title(originAddress));
-        destinationMarker = googleMap.addMarker(new MarkerOptions().position(destination).title(destinationAddress));
+        originMarker = googleMap.addMarker(new MarkerOptions().position(origin).title(originAddress)
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA)));
+        destinationMarker = googleMap.addMarker(new MarkerOptions().position(destination).title(destinationAddress)
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE)));
 
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(origin, DEFAULT_ZOOM));
     }
@@ -233,6 +234,7 @@ public class MapFragment extends Fragment implements MapContract.View, OnMapRead
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
+
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(getContext(),
                     Manifest.permission.ACCESS_FINE_LOCATION)
@@ -245,6 +247,14 @@ public class MapFragment extends Fragment implements MapContract.View, OnMapRead
             buildGoogleMapApiClient();
             this.googleMap.setMyLocationEnabled(true);
         }
+
+        this.googleMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
+            @Override
+            public boolean onMyLocationButtonClick() {
+                getCurrentLocation();
+                return false;
+            }
+        });
     }
 
     @Override
@@ -253,38 +263,7 @@ public class MapFragment extends Fragment implements MapContract.View, OnMapRead
         locationRequest.setInterval(1000);
         locationRequest.setFastestInterval(1000);
         locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-        if (ContextCompat.checkSelfPermission(getContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-            LocationServices.FusedLocationApi.requestLocationUpdates(apiClient, locationRequest, new com.google.android.gms.location.LocationListener() {
-                @Override
-                public void onLocationChanged(Location location) {
-                    lastKnownLocation = location;
-                    if (originMarker != null) {
-                        originMarker.remove();
-                    }
-
-                    //Place current location marker
-                    LatLng currLatLng = new LatLng(location.getLatitude(), location.getLongitude());
-                    MarkerOptions markerOptions = new MarkerOptions();
-                    markerOptions.position(currLatLng);
-                    markerOptions.title("Current Position");
-                    markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
-                    originMarker = googleMap.addMarker(markerOptions);
-
-                    //move map camera
-                    googleMap.moveCamera(CameraUpdateFactory.newLatLng(currLatLng));
-                    googleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
-
-                    presenter.getRoutes(lastKnownLocation);
-
-                    //stop location updates
-                    if (apiClient != null) {
-                        LocationServices.FusedLocationApi.removeLocationUpdates(apiClient, this);
-                    }
-                }
-            });
-        }
+        getCurrentLocation();
     }
 
     @Override
@@ -315,15 +294,10 @@ public class MapFragment extends Fragment implements MapContract.View, OnMapRead
             if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
                     Manifest.permission.ACCESS_FINE_LOCATION)) {
 
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-
                 //Prompt the user once explanation has been shown
                 ActivityCompat.requestPermissions(getActivity(),
                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                         PERMISSIONS_REQUEST_LOCATION);
-
 
             } else {
                 // No explanation needed, we can request the permission.
@@ -334,6 +308,33 @@ public class MapFragment extends Fragment implements MapContract.View, OnMapRead
             return false;
         } else {
             return true;
+        }
+    }
+
+    private void getCurrentLocation() {
+        if (ContextCompat.checkSelfPermission(getContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            LocationServices.FusedLocationApi.requestLocationUpdates(apiClient, locationRequest, new com.google.android.gms.location.LocationListener() {
+                @Override
+                public void onLocationChanged(Location location) {
+                    lastKnownLocation = location;
+
+                    //Place current location marker
+                    LatLng currLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+
+                    //move map camera
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLng(currLatLng));
+                    googleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+
+                    presenter.getRoutes(lastKnownLocation);
+
+                    //stop location updates
+                    if (apiClient != null) {
+                        LocationServices.FusedLocationApi.removeLocationUpdates(apiClient, this);
+                    }
+                }
+            });
         }
     }
 }

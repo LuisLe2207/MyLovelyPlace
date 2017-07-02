@@ -1,5 +1,7 @@
 package com.example.luisle.interviewtest.places;
 
+import android.support.annotation.NonNull;
+
 import com.example.luisle.interviewtest.BasePresenter;
 import com.example.luisle.interviewtest.BaseView;
 import com.example.luisle.interviewtest.data.Place;
@@ -15,6 +17,8 @@ public interface PlacesContract {
     interface View extends BaseView<Presenter> {
         void showPlaces(List<Place> places);
         void showAddPlaceUi();
+        void showPlaceDetailUI(@NonNull String placeID);
+        void startDirectionActivity(@NonNull String placeID);
         void showNoDataAvailable();
         void hideNoDataAvailable();
     }
@@ -22,5 +26,7 @@ public interface PlacesContract {
     interface Presenter extends BasePresenter {
         void loadPlaces();
         void addNewPlace();
+        void openPlaceDetail(@NonNull String placeID);
+        void openDirectionActivity(@NonNull String placeID);
     }
 }

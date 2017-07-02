@@ -68,14 +68,14 @@ public class Service implements ServiceContract {
     }
 
     @Override
-    public void getDirection(@NonNull String origin, @NonNull String destination, @NonNull final OnDirectionLoaded callback) {
+    public void getDirection(@NonNull String origin, @NonNull final String destination, @NonNull final OnDirectionLoaded callback) {
         MapsApi mapsApi = retrofit.create(MapsApi.class);
         Call<Direction> call = mapsApi.getDirection(origin, destination);
         call.enqueue(new Callback<Direction>() {
             @Override
             public void onResponse(final Call<Direction> call, Response<Direction> response) {
                 Direction direction = response.body();
-                if (direction != null) {
+                if (direction != null && !direction.getRoutes().isEmpty()) {
                     final LatLng origin = new LatLng(
                             direction.getRoutes().get(0).getLegs().get(0).getStart_location().getLat(),
                             direction.getRoutes().get(0).getLegs().get(0).getStart_location().getLng());
