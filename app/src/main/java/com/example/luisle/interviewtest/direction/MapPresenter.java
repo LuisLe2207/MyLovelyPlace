@@ -74,6 +74,7 @@ public class MapPresenter implements MapContract.Presenter, IPlacesDataSource.Ge
         placesRepository.getPlace(placeID, this);
         view.showProgressDlg();
 
+        // Check the availability of Google Play Service
         if (!AppUtils.checkPlayServices(context)) {
             view.hideProgressDlg();
             view.showWarningDialog(context.getResources().getString(R.string.error_google_play_services_not_available));
