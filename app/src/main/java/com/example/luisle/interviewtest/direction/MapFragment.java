@@ -12,6 +12,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -229,6 +230,15 @@ public class MapFragment extends Fragment implements MapContract.View, OnMapRead
     @Override
     public void hideProgressDlg() {
         progressDialog.hide();
+    }
+
+    @Override
+    public void showWarningDialog(String message) {
+        final AlertDialog.Builder alertDialog =  new AlertDialog.Builder(getContext());
+        alertDialog.setTitle(getContext().getResources().getString(R.string.txt_warning_alert_dialog_title));
+        alertDialog.setMessage(message);
+        alertDialog.setIcon(R.mipmap.ic_warning);
+        alertDialog.setCancelable(true).create().show();
     }
 
     @Override

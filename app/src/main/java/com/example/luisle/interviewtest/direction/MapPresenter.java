@@ -8,11 +8,13 @@ import android.support.annotation.NonNull;
 
 import com.example.luisle.interviewtest.DaggerAppComponent;
 import com.example.luisle.interviewtest.MyApp;
+import com.example.luisle.interviewtest.R;
 import com.example.luisle.interviewtest.data.Place;
 import com.example.luisle.interviewtest.data.source.PlacesRepository;
 import com.example.luisle.interviewtest.data.source.db.IPlacesDataSource;
 import com.example.luisle.interviewtest.map.Service;
 import com.example.luisle.interviewtest.map.ServiceContract;
+import com.example.luisle.interviewtest.utils.AppUtils;
 import com.google.android.gms.maps.model.LatLng;
 
 import javax.inject.Inject;
@@ -71,6 +73,11 @@ public class MapPresenter implements MapContract.Presenter, IPlacesDataSource.Ge
     public void start() {
         placesRepository.getPlace(placeID, this);
         view.showProgressDlg();
+
+        if (!AppUtils.checkPlayServices(context)) {
+            view.hideProgressDlg();
+            view.showWarningDialog(context.getResources().getString(R.string.error_google_play_services_not_available));
+        } 
     }
 
     @Override
@@ -94,6 +101,13 @@ public class MapPresenter implements MapContract.Presenter, IPlacesDataSource.Ge
 
             @Override
             public void onFailed() {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        view.hideProgressDlg();
+                        view.showWarningDialog(context.getResources().getString(R.string.error_get_direction_error));
+                    }
+                }, 2000);
 
             }
         });

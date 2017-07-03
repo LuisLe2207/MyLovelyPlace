@@ -219,13 +219,12 @@ public class PlaceDetailFragment extends Fragment implements PlaceDetailContract
     public void setPlaceOnMap(LatLng latLng, String placeName) {
         float zoom = 15;
         MarkerOptions markerOptions = new MarkerOptions()
-                                            .position(latLng)
-                                            .title(placeName)
-                                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+                .position(latLng)
+                .title(placeName)
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
         Marker marker = googleMap.addMarker(markerOptions);
         marker.showInfoWindow();
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
-
     }
 
     @Override
@@ -244,9 +243,11 @@ public class PlaceDetailFragment extends Fragment implements PlaceDetailContract
     }
 
     @Override
-    public void showAlertDlg() {
+    public void showDeleteAlertDlg() {
         final AlertDialog.Builder alertDialog =  new AlertDialog.Builder(getContext());
+        alertDialog.setTitle(getContext().getResources().getString(R.string.txt_delete_alert_dialog_title));
         alertDialog.setMessage(getContext().getResources().getString(R.string.txt_delete_alert_dialog) + " '" + edtPlaceName.getText() + "'");
+        alertDialog.setIcon(R.mipmap.ic_warning);
         alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
@@ -261,6 +262,15 @@ public class PlaceDetailFragment extends Fragment implements PlaceDetailContract
             }
         });
 
+        alertDialog.setCancelable(true).create().show();
+    }
+
+    @Override
+    public void showWarningDialog(String message) {
+        final AlertDialog.Builder alertDialog =  new AlertDialog.Builder(getContext());
+        alertDialog.setTitle(getContext().getResources().getString(R.string.txt_warning_alert_dialog_title));
+        alertDialog.setMessage(message);
+        alertDialog.setIcon(R.mipmap.ic_warning);
         alertDialog.setCancelable(true).create().show();
     }
 

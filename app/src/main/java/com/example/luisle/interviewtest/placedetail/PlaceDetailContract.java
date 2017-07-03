@@ -18,7 +18,8 @@ public interface PlaceDetailContract {
         void showPlaceEditUi(@NonNull String placeID);
         void setPlaceOnMap(LatLng latLng, String placeName);
         void setData(@NonNull Place place);
-        void showAlertDlg();
+        void showDeleteAlertDlg();
+        void showWarningDialog(String message);
         void startDirectionActivity(@NonNull String placeID);
     }
 

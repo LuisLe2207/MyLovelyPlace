@@ -11,6 +11,7 @@ import android.support.test.uiautomator.UiDevice;
 import android.support.test.uiautomator.UiObject;
 import android.support.test.uiautomator.UiObjectNotFoundException;
 import android.support.test.uiautomator.UiSelector;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -67,8 +68,6 @@ public class ScreenTest {
 
     @Test
     public void clickPlaceOnRecyclerView_OpenDetailUI() throws Exception {
-        // Add new Place
-        //addPlace();
 
         // Perform click on recyclerview item
         onView(withId(R.id.rcvListFrag_Places))
@@ -274,22 +273,24 @@ public class ScreenTest {
     private static void allowPermissionsIfNeeded() {
         if (Build.VERSION.SDK_INT >= 23) {
             UiDevice device = UiDevice.getInstance(getInstrumentation());
-            UiObject allowPermissions = device.findObject(new UiSelector().text("ALLOW"));
+            UiObject allowPermissions = device.findObject(new UiSelector().text("Allow"));
             if (allowPermissions.exists()) {
                 try {
                     allowPermissions.click();
                 } catch (UiObjectNotFoundException e) {
-
+                    Log.e("UiObjectNotFound", e.getMessage());
                 }
             }
         }
     }
 
+    // Get String.xml resource
     private String getResourceString(int id) {
         Context targetContext = InstrumentationRegistry.getTargetContext();
         return targetContext.getResources().getString(id);
     }
 
+    // Wait for something
     public static ViewAction waitFor(final long millis) {
         return new ViewAction() {
             @Override
@@ -309,6 +310,7 @@ public class ScreenTest {
         };
     }
 
+    // Get text from EditText or TextView
     private String getText(final Matcher<View> matcher) {
         final String[] stringHolder = { null };
         onView(matcher).perform(new ViewAction() {

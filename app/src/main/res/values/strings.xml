@@ -26,7 +26,12 @@
     <string name="txt_delete_dialog">Deleting &#8230;</string>
     <string name="txt_finding_dialog">Finding &#8230;</string>
     <string name="txt_delete_alert_dialog">Do you want to delete </string>
+    <string name="txt_delete_alert_dialog_title">Confirm delete &#8230;</string>
+    <string name="txt_warning_alert_dialog_title">Warning</string>
 
 
     <string name="error_field_can_not_be_empty">Field can not be empty</string>
+    <string name="error_google_play_services_not_available">Google Play Services is not available</string>
+    <string name="error_get_location_error">Can not get place\'s location</string>
+    <string name="error_get_direction_error">Can not get direction</string>
 </resources>

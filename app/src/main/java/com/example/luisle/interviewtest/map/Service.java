@@ -91,6 +91,8 @@ public class Service implements ServiceContract {
                             callback.onLoaded(origin, destination, originAddress, destinationAddress, polylinePoints);
                         }
                     }, 1000);
+                } else {
+                    callback.onFailed();
                 }
             }
 

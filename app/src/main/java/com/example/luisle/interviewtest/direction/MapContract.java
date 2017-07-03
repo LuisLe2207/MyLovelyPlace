@@ -14,6 +14,7 @@ public interface MapContract {
 
     interface View extends BaseView<Presenter>, BaseView.ViewProgress {
         void drawRoutes(LatLng origin, LatLng destination, String originAddress, String destinationAddress, String polylinePoints);
+        void showWarningDialog(String message);
         void setToolbarTitle(String title);
     }
 

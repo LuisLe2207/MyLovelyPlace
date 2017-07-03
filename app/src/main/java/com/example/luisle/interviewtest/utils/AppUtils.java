@@ -1,12 +1,15 @@
 package com.example.luisle.interviewtest.utils;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.util.DisplayMetrics;
 import android.widget.ImageView;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.makeramen.roundedimageview.RoundedDrawable;
 
 import java.io.ByteArrayOutputStream;
@@ -50,6 +53,13 @@ public final class AppUtils {
 
         // Device's smallest width and in landscape
         return (diagonalInches > 6.8 && Configuration.ORIENTATION_LANDSCAPE == configuration.orientation);
+    }
+
+
+    public static boolean checkPlayServices(Context context) {
+        GoogleApiAvailability gApi = GoogleApiAvailability.getInstance();
+        int resultCode = gApi.isGooglePlayServicesAvailable(context);
+        return (resultCode == ConnectionResult.SUCCESS);
     }
 
     public interface Communicator {

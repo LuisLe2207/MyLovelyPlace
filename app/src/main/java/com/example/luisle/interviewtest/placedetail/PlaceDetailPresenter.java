@@ -7,11 +7,13 @@ import android.support.annotation.NonNull;
 
 import com.example.luisle.interviewtest.DaggerAppComponent;
 import com.example.luisle.interviewtest.MyApp;
+import com.example.luisle.interviewtest.R;
 import com.example.luisle.interviewtest.data.Place;
 import com.example.luisle.interviewtest.data.source.PlacesRepository;
 import com.example.luisle.interviewtest.data.source.db.IPlacesDataSource;
 import com.example.luisle.interviewtest.map.Service;
 import com.example.luisle.interviewtest.map.ServiceContract;
+import com.example.luisle.interviewtest.utils.AppUtils;
 import com.google.android.gms.maps.model.LatLng;
 
 import javax.inject.Inject;
@@ -96,7 +98,7 @@ public class PlaceDetailPresenter implements PlaceDetailContract.Presenter, IPla
 
     @Override
     public void openDeleteAlertDlg() {
-        view.showAlertDlg();
+        view.showDeleteAlertDlg();
     }
 
     @Override
@@ -108,9 +110,12 @@ public class PlaceDetailPresenter implements PlaceDetailContract.Presenter, IPla
 
         final String query = placeName + placeAddress;
 
-        // Get place's location
-        service.getLocation(placeName, query, this);
-
+        if (AppUtils.checkPlayServices(context)) {
+            // Get place's location
+            service.getLocation(placeName, query, this);
+        } else {
+            view.showWarningDialog(context.getResources().getString(R.string.error_google_play_services_not_available));
+        }
     }
 
     @Override
@@ -130,6 +135,6 @@ public class PlaceDetailPresenter implements PlaceDetailContract.Presenter, IPla
 
     @Override
     public void onFailed() {
-
+        view.showWarningDialog(context.getResources().getString(R.string.error_get_location_error));
     }
 }

@@ -175,7 +175,8 @@ public class PlacesFragment extends Fragment implements PlacesContract.View, Pla
         if (!deviceIsLandscapeTablet) {
             transaction.replace(R.id.mainAct_FrameLayout, placeDetailFragment, DETAIL_FRAGMENT_TAG).addToBackStack(PORTRAIT_STACK);
         } else {
-            transaction.replace(R.id.mainAct_AnotherFragContent, placeDetailFragment, DETAIL_FRAGMENT_TAG).addToBackStack(LANDSCAPE_STACK);
+            if (getActivity().getSupportFragmentManager().getBackStackEntryCount() == 0)
+                transaction.replace(R.id.mainAct_AnotherFragContent, placeDetailFragment, DETAIL_FRAGMENT_TAG).addToBackStack(LANDSCAPE_STACK);
         }
         transaction.commit();
     }
